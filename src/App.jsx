@@ -344,7 +344,7 @@ function CoverPage({ onOpen }) {
             by
             <span className="name">SHRISHTI ROY</span>
           </div>
-          <div className="cover-vol">Vol. I<br />MMXXVI</div>
+          <div className="cover-vol">Vol. I<br />MMXXIII</div>
         </div>
       </div>
       <div className="cover-hint" />
@@ -358,11 +358,11 @@ function InsideFrontPage() {
       <div className="stamp">Property of Shrishti Roy — kitchen no. 1</div>
       <div className="meta" style={{ marginTop: 'auto' }}>
         <div style={{ fontSize: 13, lineHeight: 1.6 }}>
-          A working notebook of dishes I've cooked and experimented with.
+          A "hand-written" notebook of dishes that I've cooked and experimented with. Yes, the font is my handwriting. Thank you, I know it's nice.
         </div>
         <div style={{ height: 14 }} />
         <div style={{ fontSize: 12 }}>
-          <strong>Entries from</strong> November 2024
+          <strong>Entries from</strong> November 2023
         </div>
         <div style={{ fontSize: 12 }}>
           <strong>To</strong> May 2026
@@ -867,6 +867,12 @@ function HeroAbout() {
   const heroSideRef = useRef(null);
   const [sprinkling, setSprinkling] = useState(false);
   const [spoutPos, setSpoutPos] = useState(null);
+  const [heroVisible, setHeroVisible] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setHeroVisible(true), 200);
+    return () => clearTimeout(timer);
+  }, []);
 
   const smoothScrollToBook = useCallback(() => {
     const bookEl = document.querySelector('.book-section');
@@ -924,7 +930,7 @@ function HeroAbout() {
   };
 
   return (
-    <section className="hero">
+    <section className={`hero ${heroVisible ? 'hero-visible' : ''}`}>
       <div className="hero-text">
         <div className="hero-eyebrow">ORIGIN</div>
         <h2 className="hero-title">

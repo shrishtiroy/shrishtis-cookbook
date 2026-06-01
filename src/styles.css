@@ -154,16 +154,40 @@ body { overflow-x: hidden; }
   padding: 0;
 }
 .sister-polaroid {
+  position: relative;
   background: #fff;
-  padding: 5px 5px 20px;
+  padding: 5px 5px 16px;
   box-shadow: 0 3px 10px rgba(0,0,0,.14);
   transform: rotate(2deg);
   width: clamp(120px, 16vw, 200px);
   z-index: 3;
   margin-right: -60px;
-  animation: tape-stick 1.2s ease-out both;
-  animation-delay: 0.6s;
+  opacity: 0;
 }
+.sister-polaroid .pin {
+  width: 52px;
+  position: absolute;
+  top: -9px;
+  left: 50%;
+  height: 18px;
+  z-index: 5;
+  transform: translateX(-50%) rotate(-4deg);
+  transform-origin: 50% 0;
+  background: linear-gradient(180deg, rgba(232,213,150,.55), rgba(212,189,120,.65));
+  box-shadow: 0 1px 2px rgba(0,0,0,.08);
+  opacity: .85;
+}
+.sister-polaroid .pin::before,
+.sister-polaroid .pin::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  background: radial-gradient(circle at 50% 50%, transparent 0 3px, rgba(232,213,150,.55) 3px);
+}
+.sister-polaroid .pin::before { left: -3px; }
+.sister-polaroid .pin::after  { right: -3px; }
 .sister-polaroid img {
   width: 100%;
   aspect-ratio: 3/4;
@@ -179,46 +203,32 @@ body { overflow-x: hidden; }
   padding-top: 6px;
 }
 
-@keyframes tape-stick {
-  0% {
-    opacity: 0;
-    transform: rotate(-8deg) translateY(-30px) scale(0.85);
-  }
-  50% {
-    opacity: 1;
-    transform: rotate(4deg) translateY(4px) scale(1.02);
-  }
-  70% {
-    transform: rotate(0deg) translateY(-2px) scale(1);
-  }
-  100% {
-    opacity: 1;
-    transform: rotate(2deg) translateY(0) scale(1);
-  }
+.hero-visible .sister-polaroid { animation: photo-settle-r .8s cubic-bezier(.34,1.1,.5,1) both; }
+.hero-visible .sister-polaroid .pin { animation: tape-press .7s cubic-bezier(.32,1.15,.5,1) .38s both; }
+
+@keyframes photo-settle-r {
+  0%{opacity:0;transform:rotate(-1deg) translateY(-14px) scale(.97);}
+  60%{opacity:1;transform:rotate(2.6deg) translateY(2px) scale(1.004);}
+  100%{opacity:1;transform:rotate(2deg) translateY(0) scale(1);}
 }
 
-@keyframes tape-stick-header {
-  0% {
-    opacity: 0;
-    transform: rotate(5deg) translateY(-25px) scale(0.88);
-  }
-  50% {
-    opacity: 1;
-    transform: rotate(-4deg) translateY(3px) scale(1.02);
-  }
-  70% {
-    transform: rotate(-1deg) translateY(-2px) scale(1);
-  }
-  100% {
-    opacity: 1;
-    transform: rotate(-2deg) translateY(0) scale(1);
-  }
+@keyframes tape-press {
+  0%{opacity:0;transform:translateX(-50%) translateY(-9px) rotate(4deg) scaleY(1.25);}
+  50%{opacity:.85;transform:translateX(-50%) translateY(1px) rotate(-5deg) scaleY(.94);}
+  74%{transform:translateX(-50%) translateY(0) rotate(-3deg) scaleY(1.02);}
+  100%{opacity:.85;transform:translateX(-50%) translateY(0) rotate(-4deg) scaleY(1);}
+}
+
+@keyframes photo-settle-l {
+  0%{opacity:0;transform:rotate(1deg) translateY(-14px) scale(.97);}
+  60%{opacity:1;transform:rotate(-2.6deg) translateY(2px) scale(1.004);}
+  100%{opacity:1;transform:rotate(-2deg) translateY(0) scale(1);}
 }
 
 .pinned-polaroid {
   position: relative;
 }
-.pin {
+.pinned-polaroid > .pin {
   position: absolute;
   top: -8px;
   left: 50%;
@@ -470,26 +480,45 @@ body { overflow-x: hidden; }
 }
 
 .about-photo-wrap {
-  opacity: 0;
-  transform: translateY(20px) scale(0.97);
-  transition: opacity 1s ease 0.6s, transform 1s ease 0.6s;
-}
-.about-visible .about-photo-wrap {
   opacity: 1;
-  transform: translateY(0) scale(1);
+  transform: none;
 }
-.about-visible .about-photo-wrap .pinned-polaroid {
-  animation: tape-stick-header 1.2s ease-out both;
-  animation-delay: 0.8s;
-}
-
 .about-photo-wrap .pinned-polaroid {
+  position: relative;
   background: #fff;
   padding: 5px 5px 18px;
-  box-shadow: 0 3px 12px rgba(0,0,0,.18);
-  transform: rotate(-2deg);
   width: 320px;
+  transform: rotate(-2deg);
+  box-shadow: 0 3px 12px rgba(0,0,0,.18);
+  opacity: 0;
 }
+.about-photo-wrap .pin {
+  width: 64px;
+  position: absolute;
+  top: -9px;
+  left: 50%;
+  height: 18px;
+  z-index: 5;
+  transform: translateX(-50%) rotate(-4deg);
+  transform-origin: 50% 0;
+  background: linear-gradient(180deg, rgba(232,213,150,.55), rgba(212,189,120,.65));
+  box-shadow: 0 1px 2px rgba(0,0,0,.08);
+  opacity: .85;
+}
+.about-photo-wrap .pin::before,
+.about-photo-wrap .pin::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  background: radial-gradient(circle at 50% 50%, transparent 0 3px, rgba(232,213,150,.55) 3px);
+}
+.about-photo-wrap .pin::before { left: -3px; }
+.about-photo-wrap .pin::after  { right: -3px; }
+
+.about-visible .about-photo-wrap .pinned-polaroid { animation: photo-settle-l .8s cubic-bezier(.34,1.1,.5,1) both; }
+.about-visible .about-photo-wrap .pin { animation: tape-press .7s cubic-bezier(.32,1.15,.5,1) .38s both; }
 .about-photo {
   width: 100%;
   aspect-ratio: 4/3;
