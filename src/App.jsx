@@ -668,7 +668,100 @@ function buildPages(goToKey) {
   return list;
 }
 
+// Detect a phone-sized viewport. The two-page spread + 3D flip is replaced
+// by a single-page reader below this breakpoint.
+function useIsMobile(query = '(max-width: 760px)') {
+  const getMatch = () => typeof window !== 'undefined' && window.matchMedia(query).matches;
+  const [isMobile, setIsMobile] = useState(getMatch);
+  useEffect(() => {
+    const mq = window.matchMedia(query);
+    const onChange = () => setIsMobile(mq.matches);
+    onChange();
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, [query]);
+  return isMobile;
+}
+
+// Mobile: one page at a time, light slide transition, same Index + arrows.
+function MobileBook() {
+  const goToKeyRef = useRef(null);
+  const goToKey = useCallback((key) => { goToKeyRef.current?.(key); }, []);
+  const pages = useMemo(() => buildPages(goToKey), [goToKey]);
+  const last = pages.length - 1;
+  const [idx, setIdx] = useState(0);
+  const [dir, setDir] = useState(1);
+
+  const go = useCallback((d) => {
+    setIdx((i) => {
+      const to = i + d;
+      if (to < 0 || to > last) return i;
+      setDir(d);
+      return to;
+    });
+  }, [last]);
+
+  goToKeyRef.current = (key) => {
+    const i = pages.findIndex((p) => p.key === key);
+    if (i >= 0) { setDir(i < idx ? -1 : 1); setIdx(i); }
+  };
+
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === 'ArrowRight') { e.preventDefault(); go(1); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); go(-1); }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [go]);
+
+  const page = pages[idx];
+  const isCover = idx === 0;
+  const content = page?.render({ onOpen: () => go(1) }) || null;
+
+  return (
+    <>
+      <div className="mobile-book" data-cover={isCover ? 'true' : 'false'}>
+        {isCover ? content : (
+          <div
+            className={`page single paper mpage-enter ${dir === 1 ? 'from-right' : 'from-left'}`}
+            key={idx}>
+            {content}
+          </div>
+        )}
+      </div>
+
+      <button
+        className="nav-arrow prev"
+        onClick={() => go(-1)}
+        disabled={idx === 0}
+        aria-label="Previous page">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="15 5 9 12 15 19" /></svg>
+      </button>
+      <button
+        className="nav-arrow next"
+        onClick={() => go(1)}
+        disabled={idx >= last}
+        aria-label="Next page">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="9 5 15 12 9 19" /></svg>
+      </button>
+
+      {idx > 0 && (
+        <button className="back-to-toc" onClick={() => goToKey('toc')}>
+          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 5 9 12 15 19"/></svg>
+          <span>Index</span>
+        </button>
+      )}
+    </>
+  );
+}
+
 function Book() {
+  const isMobile = useIsMobile();
+  return isMobile ? <MobileBook /> : <DesktopBook />;
+}
+
+function DesktopBook() {
   const goToKeyRef = useRef(null);
   const goToKey = useCallback((key) => { goToKeyRef.current?.(key); }, []);
   const pages = useMemo(() => buildPages(goToKey), [goToKey]);
