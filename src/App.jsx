@@ -36,6 +36,9 @@ const SHOWSTOPPERS = [
   { id: "ss11", name: "The Great British Baking Show Cake", date: "01.09.26",
     photos: ["/food-pics/showstoppers/the great british baking show cake.JPG"],
     note: "After making my carrot cake my sister and I realized we could make any cake. So, we tackled the Great British Baking Show cake since that is what inspires a lot of our bakes. It was an unexpectedly large cake since our cake pan was really big but really chocolatey and decadent. Definitely needed more salt but it was still so good. The ganache was also pretty rich and didn't have the glossy finish a good ganache should have but it was our first time making ganache so it was a solid attempt.", tilt: -2.0 },
+  { id: "ss12", name: "Mochi Donuts", date: "06.17.26",
+    photos: ["/food-pics/showstoppers/mochi donuts.JPG"],
+    note: "If you're wondering why these look so delicious it's because they were made blind deaf and mute. As the most competent being on earth I was mute, otherwise you would be looking at an empty plate. My best friend was blind and our other best friend was deaf. You might think that I had it the easiest. I did not. They were incredibly annoying with the blind one talking and talking and talking and the deaf one singing and trying to converse with the blind one but neither of them could understand each other and I just had to sit with a spatula in my hand and make everything in SILENCE. If you want to see what I truly had to experience subscribe to my Patreon. Anyways, these weren't as chewy as a real mochi donut and the glaze was super loose but they were the fruits of MY effort and they were good. I rated them a 7. They rated it a 2.5. #neverdoingthischallengeagain", tilt: 1.4 },
 ];
 
 const COLLEGE_MEALS = [
@@ -224,6 +227,15 @@ const HEALTHY_RECIPES = [
     photos: ["/food-pics/healthy-recipes/cottage cheese cornbread.JPG", "/food-pics/healthy-recipes/cottage cheese cornbread ice cream.JPG"],
     captions: ["Cottage Cheese Cornbread", "Cornbread Ice Cream"],
     note: "My best friend was going to come over so I wanted to make a healthy cornbread with cottage cheese and Greek yogurt. I added bits of sweet corn but it was still too tangy and oddly moist. Keeping up with the cornbread theme I made this ice cream to complement the cornbread with the same base as the cinnamon CC ice cream. It was also not sweet enough but eating this with the cornbread was pretty good.", tilt: 1.8 },
+  { id: "hr11", name: "Flourless Fudgy Banana Bread Brownies", date: "06.06.26",
+    photos: ["/food-pics/healthy-recipes/flourless fudgy banana bread brownies.JPG"],
+    note: "These have no added flour or oat flour shockingly. They have a very rich and chocolatey flavor but also a lot of salt to balance it. I really liked these. My sister did not as much. The texture is also moist which is rare and new compared to the rest of the healthy banana breads that I have made.", tilt: -1.4 },
+  { id: "hr12", name: "Cottage Cheese Pizza Toast", date: "06.13.26",
+    photos: ["/food-pics/healthy-recipes/cottage cheese pizza toast.JPG"],
+    note: "My first time trying Good Culture cottage cheese (please sponsor me). It's a lot cheesier and thicker than typical cottage cheese but makes it a lot more ideal for cooking. Toasted the garlic sourdough bread beforehand. Added marinara sauce, the cottage cheese, a couple shreds of mozzarella, and sliced tomatoes. Drizzled with balsamic glaze and this was eaten in under 4 bites. Extremely delectable.", tilt: 1.8 },
+  { id: "hr13", name: "Choccy Tofu Pancakes", date: "06.17.26",
+    photos: ["/food-pics/healthy-recipes/choccy tofu pancakes.JPG"],
+    note: "The batter is basically a chocolate overnight oats batter but blended with extra firm tofu. The batter was really good on its own as well: cocoa powder, extra firm tofu blended with a bit of water, chia seeds, oats, baking powder, and almond milk. Tasted great with bananas and our cashew butter!", tilt: -2.2 },
 ];
 
 const FOOD_AROUND_WORLD = [
@@ -286,6 +298,10 @@ const FOOD_AROUND_WORLD = [
     photos: ["/food-pics/food-around-the-world/neopolitan margherita pizza.JPG"],
     region: "italy",
     note: "Shoutout Vincenzo on YouTube. His pizza dough recipe is incredible. This was my sister and my first time making pizza dough from scratch and though the whole process took like 4 hours + time for cold fermentation, this was one of the best pizzas I have ever had. I was borrowing my friend's steel pizza pan and we preheated the oven by broiling for an hour. It was shockingly crispy and had these beautiful bubbles in the crust. The crust is my favorite part of pizza. We topped it with basil from our basil plant and it was simple but amazing.", tilt: 2.6 },
+  { id: "fw15", name: "Kimchi Fried Rice", date: "06.17.26",
+    photos: ["/food-pics/food-around-the-world/kimchi fried rice.JPG"],
+    region: "korea",
+    note: "I made this for my best friend who's vegetarian. Stir fried kimchi and used tofu and egg whites for protein. I used a mix of brown and red rice that I had just made a couple hours before. I froze it to try and dry it out completely but it still clumped a little. Made the perfect fried egg and patiently lifted it off the pan. What an amazing friend I am.", tilt: -1.8 },
 ];
 
 function SaltShaker() {
