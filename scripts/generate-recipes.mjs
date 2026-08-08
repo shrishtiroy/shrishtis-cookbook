@@ -46,6 +46,29 @@ for (const chapterKey of CHAPTER_ORDER) {
   });
 }
 
+const latestRow = db.prepare(
+  `SELECT id, dish_id, chapter, name, date, region, note, created_at
+   FROM recipes ORDER BY id DESC LIMIT 1`
+).get();
+
+if (latestRow) {
+  const photos = db.prepare(
+    `SELECT photo_path FROM recipe_photos WHERE recipe_id = ? ORDER BY sort_order ASC, id ASC`
+  ).all(latestRow.id);
+  const totalCount = db.prepare(`SELECT COUNT(*) AS c FROM recipes`).get().c;
+
+  result.LATEST = {
+    id: latestRow.dish_id,
+    chapter: latestRow.chapter,
+    name: latestRow.name,
+    date: latestRow.date ?? '',
+    region: latestRow.region ?? null,
+    note: latestRow.note,
+    photo: photos[0]?.photo_path ?? null,
+    totalCount,
+  };
+}
+
 db.close();
 
 fs.mkdirSync(OUT_DIR, { recursive: true });

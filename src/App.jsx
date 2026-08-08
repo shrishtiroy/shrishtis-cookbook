@@ -8,7 +8,17 @@ const {
   HEALTHY_RECIPES,
   FOOD_AROUND_WORLD,
   DESSERTS,
+  LATEST: LATEST_RECIPE,
 } = recipesData;
+
+// "MM.DD.YY" -> "AUGUST 8, 2026", for the newspaper popup's dateline.
+function formatNewspaperDate(dateStr) {
+  if (!dateStr) return '';
+  const [mm, dd, yy] = dateStr.split('.').map(Number);
+  if (!mm || !dd || !yy) return '';
+  const d = new Date(2000 + yy, mm - 1, dd);
+  return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).toUpperCase();
+}
 
 function SaltShaker() {
   return (
@@ -844,9 +854,91 @@ function AboutSection() {
   );
 }
 
+function NewspaperPopup() {
+  const [phase, setPhase] = useState('entering'); // entering -> open -> folding -> flying -> gone
+  const timers = useRef([]);
+
+  useEffect(() => {
+    timers.current.push(setTimeout(() => setPhase('open'), 1100));
+    return () => timers.current.forEach(clearTimeout);
+  }, []);
+
+  const close = useCallback(() => {
+    if (phase !== 'open' && phase !== 'entering') return;
+    setPhase('folding');
+    timers.current.push(setTimeout(() => setPhase('flying'), 650));
+    timers.current.push(setTimeout(() => setPhase('gone'), 1950));
+  }, [phase]);
+
+  const goToBook = useCallback((e) => {
+    e.stopPropagation();
+    close();
+    timers.current.push(setTimeout(() => {
+      document.querySelector('.book-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 1900));
+  }, [close]);
+
+  if (phase === 'gone' || !LATEST_RECIPE) return null;
+
+  const dateline = LATEST_RECIPE.date
+    ? formatNewspaperDate(LATEST_RECIPE.date)
+    : (LATEST_RECIPE.region ? LATEST_RECIPE.region.toUpperCase() : '');
+
+  return (
+    <div className={`newspaper-overlay ${phase}`} onClick={close}>
+      <div className={`newspaper-card ${phase}`} onClick={(e) => e.stopPropagation()}>
+        <button type="button" className="newspaper-close" onClick={close} aria-label="Close">✕</button>
+        <div className="np-rule thick" />
+        <h1 className="np-masthead">THE CRITIC</h1>
+        <div className="np-rule thick" />
+        <div className="np-subline">
+          <span>VOL. 1, NO. {LATEST_RECIPE.totalCount}</span>
+          <span className="np-dot">✳</span>
+          <span>ADDSALT.COM</span>
+          {dateline && <span className="np-dot">✳</span>}
+          {dateline && <span>{dateline}</span>}
+        </div>
+        <div className="np-rule thin" />
+        <div className="news-ticker">
+          <div className="news-ticker-track">
+            <span>BREAKING NEWS&nbsp;✳&nbsp;BREAKING NEWS&nbsp;✳&nbsp;BREAKING NEWS&nbsp;✳&nbsp;BREAKING NEWS&nbsp;✳&nbsp;</span>
+            <span aria-hidden="true">BREAKING NEWS&nbsp;✳&nbsp;BREAKING NEWS&nbsp;✳&nbsp;BREAKING NEWS&nbsp;✳&nbsp;BREAKING NEWS&nbsp;✳&nbsp;</span>
+          </div>
+        </div>
+        <div className="np-rule thin" />
+        <div className="np-body">
+          <div className="np-text">
+            <div className="np-eyebrow">New recipe:</div>
+            <h2 className="np-title">{LATEST_RECIPE.name}</h2>
+            <p className="np-desc">{LATEST_RECIPE.note}</p>
+          </div>
+          {LATEST_RECIPE.photo && (
+            <div className="np-photo">
+              <img src={LATEST_RECIPE.photo} alt={LATEST_RECIPE.name} />
+            </div>
+          )}
+        </div>
+        <div className="np-quote">"SHRISHTI HAS DONE IT AGAIN."</div>
+        <div className="np-rule thick" />
+        <button type="button" className="np-cta" onClick={goToBook}>
+          Read the full recipe in the cookbook <span aria-hidden="true">→</span>
+        </button>
+      </div>
+      <div className={`paper-airplane ${phase === 'flying' ? 'fly' : ''}`} aria-hidden="true">
+        <svg viewBox="0 0 100 100" width="86" height="86">
+          <polygon points="4,54 96,8 58,54 96,92" fill="#f1e8cf" stroke="#2c2a23" strokeWidth="2" />
+          <polygon points="58,54 96,8 58,92" fill="#e2d3ac" stroke="#2c2a23" strokeWidth="2" />
+        </svg>
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
   return (
     <div className="page-shell">
+      <NewspaperPopup />
+
       <header className="wordmark">
         <div className="brand">ADD SALT.</div>
         <div className="meta">est. 2026</div>
