@@ -9,6 +9,9 @@
 //     --description "Recipe note text" --image /path/to/photo.jpg --chapter showstoppers
 //
 // Chapters: showstoppers, college-meals, healthy-recipes, food-around-the-world, desserts
+//
+// --country (optional) — only used by food-around-the-world entries, shown
+// in place of the date on that chapter's pages, e.g. --country korea
 
 import fs from 'node:fs';
 import path from 'node:path';
@@ -38,15 +41,23 @@ function randomTilt() {
   return Math.random() < 0.5 ? -magnitude : magnitude;
 }
 
-export function addRecipe({ date, title, description, image, chapter, region }) {
-  if (!date || !title || !description || !image || !chapter) {
-    throw new Error('date, title, description, image, and chapter are all required');
+export function addRecipe({ date, title, description, image, chapter, country, region }) {
+  if (!title || !description || !image || !chapter) {
+    throw new Error('title, description, image, and chapter are all required');
   }
 
   const chapterKey = chapter.trim().toLowerCase();
   const config = CHAPTERS[chapterKey];
   if (!config) {
     throw new Error(`Unknown chapter "${chapter}". Valid chapters: ${Object.keys(CHAPTERS).join(', ')}`);
+  }
+
+  const resolvedRegion = country ?? region ?? null;
+  if (chapterKey === 'food-around-the-world' && !resolvedRegion && !date) {
+    console.warn('Warning: no --country or --date given for a food-around-the-world entry — nothing will show in the date/country spot.');
+  }
+  if (chapterKey !== 'food-around-the-world' && !date) {
+    throw new Error('date is required for this chapter');
   }
 
   if (!fs.existsSync(image)) {
@@ -81,7 +92,7 @@ export function addRecipe({ date, title, description, image, chapter, region }) 
   const info = db.prepare(
     `INSERT INTO recipes (dish_id, chapter, name, date, region, note, tilt, sort_order)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
-  ).run(dishId, chapterKey, title, date, region ?? null, description, randomTilt(), nextSort);
+  ).run(dishId, chapterKey, title, date ?? '', resolvedRegion, description, randomTilt(), nextSort);
 
   db.prepare(
     `INSERT INTO recipe_photos (recipe_id, photo_path, caption, sort_order) VALUES (?, ?, ?, ?)`
