@@ -80,7 +80,7 @@ function InsideFrontPage() {
       <div className="stamp">Property of Shrishti Roy — kitchen no. 1</div>
       <div className="meta" style={{ marginTop: 'auto' }}>
         <div style={{ fontSize: 13, lineHeight: 1.6 }}>
-          This is my kitchen notebook — a collection of dishes I've dreamed up, experimented with, and cooked with love. I'm currently a Garde Manger at the Michelin Guide restaurant, The Morris! Feel free to take a look and get to know me a little better through my palate.
+          A "hand-written" notebook of dishes that I've cooked and experimented with. Yes, the font is my handwriting. Thank you, I know it's nice.
         </div>
         <div style={{ height: 14 }} />
         <div style={{ fontSize: 12 }}>
@@ -825,8 +825,9 @@ function AboutSection() {
         </h2>
         <p className="about-body">
           This is my kitchen notebook — a collection of dishes I've dreamed up,
-          experimented with, and cooked with love. Feel free to take a look
-          and get to know me a little better through my palate.
+          experimented with, and cooked with love. I'm currently a Garde Manger
+          at the Michelin Guide restaurant, The Morris! Feel free to take a
+          look and get to know me a little better through my palate.
         </p>
       </div>
       <div className="about-photo-wrap">
