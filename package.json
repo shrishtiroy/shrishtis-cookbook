@@ -4,9 +4,12 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "predev": "node scripts/generate-recipes.mjs",
     "dev": "vite",
+    "prebuild": "node scripts/generate-recipes.mjs",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "add-recipe": "node scripts/add-recipe.mjs"
   },
   "dependencies": {
     "react": "^18.3.1",
