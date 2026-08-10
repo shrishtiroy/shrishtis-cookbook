@@ -46,10 +46,30 @@ for (const chapterKey of CHAPTER_ORDER) {
   });
 }
 
-const latestRow = db.prepare(
+// Recipes aren't necessarily inserted in date order (e.g. backfilled entries,
+// or recipes pushed out of order), so pick the most recent by the recipe's
+// own `date` field ("MM.DD.YY") rather than by row id / insertion order.
+function parseRecipeDate(dateStr) {
+  if (!dateStr) return null;
+  const [mm, dd, yy] = dateStr.split('.').map(Number);
+  if (!mm || !dd || !yy) return null;
+  return new Date(2000 + yy, mm - 1, dd).getTime();
+}
+
+const allRows = db.prepare(
   `SELECT id, dish_id, chapter, name, date, region, note, created_at
-   FROM recipes ORDER BY id DESC LIMIT 1`
-).get();
+   FROM recipes`
+).all();
+
+const latestRow = allRows.reduce((latest, row) => {
+  const rowTime = parseRecipeDate(row.date);
+  if (rowTime === null) return latest;
+  if (!latest) return row;
+  const latestTime = parseRecipeDate(latest.date);
+  if (rowTime > latestTime) return row;
+  if (rowTime === latestTime && row.id > latest.id) return row;
+  return latest;
+}, null) ?? allRows.reduce((latest, row) => (!latest || row.id > latest.id ? row : latest), null);
 
 if (latestRow) {
   const photos = db.prepare(
