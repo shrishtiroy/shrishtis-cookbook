@@ -148,7 +148,7 @@ body { overflow-x: hidden; }
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   min-height: 280px;
   overflow: visible;
   padding: 0;
@@ -159,9 +159,8 @@ body { overflow-x: hidden; }
   padding: 5px 5px 16px;
   box-shadow: 0 3px 10px rgba(0,0,0,.14);
   transform: rotate(2deg);
-  width: clamp(120px, 16vw, 200px);
+  width: clamp(160px, 20vw, 240px);
   z-index: 3;
-  margin-right: -60px;
   opacity: 0;
 }
 .sister-polaroid .pin {
@@ -239,6 +238,7 @@ body { overflow-x: hidden; }
   z-index: 5;
 }
 .shaker-group {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -261,7 +261,7 @@ body { overflow-x: hidden; }
   transform-origin: bottom center;
 }
 .hero-shaker.sprinkling {
-  transform: rotate(-55deg);
+  transform: rotate(-7deg);
   opacity: .7;
 }
 .shaker-hint {
@@ -360,8 +360,8 @@ body { overflow-x: hidden; }
   display: block;
   width: 1px;
   height: 36px;
-  background: linear-gradient(to bottom, var(--gold) 25%, transparent);
-  transform-origin: top center;
+  background: linear-gradient(to top, var(--gold) 25%, transparent);
+  transform-origin: bottom center;
   animation: readLine 2.6s ease-in-out infinite;
 }
 .read-link .read-arrow {
@@ -378,10 +378,10 @@ body { overflow-x: hidden; }
 }
 @keyframes readArrow {
   0%, 100% { transform: translateY(0); opacity: .55; }
-  50%      { transform: translateY(8px); opacity: 1; }
+  50%      { transform: translateY(-8px); opacity: 1; }
 }
 .read-link:hover .read-line, .read-link:focus-visible .read-line {
-  background: linear-gradient(to bottom, var(--gold), transparent);
+  background: linear-gradient(to top, var(--gold), transparent);
   animation-duration: 1.4s;
 }
 .read-link:hover .read-arrow, .read-link:focus-visible .read-arrow {
@@ -527,8 +527,28 @@ body { overflow-x: hidden; }
   border-radius: 1px;
 }
 
+.about-photo-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+}
+.about-shaker.shaker-group {
+  flex-shrink: 0;
+}
+.about-shaker .shaker-container {
+  width: clamp(80px, 9vw, 130px);
+}
+.about-shaker .shaker-hint {
+  font-size: 13px;
+  margin-top: 10px;
+  white-space: nowrap;
+}
+
 @media (max-width: 880px) {
   .about { padding: 40px 32px; }
+  .about-photo-row { flex-direction: column; gap: 24px; }
 }
 
 /* Book section */

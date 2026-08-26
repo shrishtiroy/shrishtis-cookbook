@@ -198,33 +198,33 @@ function TocPage({ onGoTo, onSearch }) {
       <div className="eyebrow">Index</div>
       <h2>What I made.</h2>
       <ol>
-        <li onClick={() => onGoTo?.('showstoppers-title')} style={{ cursor: 'pointer' }}>
+        <li onClick={(e) => { e.stopPropagation(); onGoTo?.('showstoppers-title'); }} style={{ cursor: 'pointer' }}>
           <span className="num" style={{ fontWeight: 600 }}>Ch. 1&ensp;</span>
           <span style={{ fontFamily: "'EB Garamond', serif", fontStyle: 'italic', fontSize: 14 }}>Showstoppers</span>
           <span className="dots" />
         </li>
-        <li onClick={() => onGoTo?.('college-title')} style={{ cursor: 'pointer' }}>
+        <li onClick={(e) => { e.stopPropagation(); onGoTo?.('college-title'); }} style={{ cursor: 'pointer' }}>
           <span className="num" style={{ fontWeight: 600 }}>Ch. 2&ensp;</span>
           <span style={{ fontFamily: "'EB Garamond', serif", fontStyle: 'italic', fontSize: 14 }}>College Meals</span>
           <span className="dots" />
         </li>
-        <li onClick={() => onGoTo?.('healthy-title')} style={{ cursor: 'pointer' }}>
+        <li onClick={(e) => { e.stopPropagation(); onGoTo?.('healthy-title'); }} style={{ cursor: 'pointer' }}>
           <span className="num" style={{ fontWeight: 600 }}>Ch. 3&ensp;</span>
           <span style={{ fontFamily: "'EB Garamond', serif", fontStyle: 'italic', fontSize: 14 }}>Healthy Recipes</span>
           <span className="dots" />
         </li>
-        <li onClick={() => onGoTo?.('world-title')} style={{ cursor: 'pointer' }}>
+        <li onClick={(e) => { e.stopPropagation(); onGoTo?.('world-title'); }} style={{ cursor: 'pointer' }}>
           <span className="num" style={{ fontWeight: 600 }}>Ch. 4&ensp;</span>
           <span style={{ fontFamily: "'EB Garamond', serif", fontStyle: 'italic', fontSize: 14 }}>Food Around the World</span>
           <span className="dots" />
         </li>
-        <li onClick={() => onGoTo?.('desserts-title')} style={{ cursor: 'pointer' }}>
+        <li onClick={(e) => { e.stopPropagation(); onGoTo?.('desserts-title'); }} style={{ cursor: 'pointer' }}>
           <span className="num" style={{ fontWeight: 600 }}>Ch. 5&ensp;</span>
           <span style={{ fontFamily: "'EB Garamond', serif", fontStyle: 'italic', fontSize: 14 }}>Desserts</span>
           <span className="dots" />
         </li>
       </ol>
-      <div className="toc-search">
+      <div className="toc-search" onClick={(e) => e.stopPropagation()}>
         <input
           type="text"
           className="toc-search-input"
@@ -235,7 +235,7 @@ function TocPage({ onGoTo, onSearch }) {
         {results.length > 0 && (
           <ul className="toc-search-results">
             {results.map(d => (
-              <li key={d.id} onClick={() => { onSearch?.(d.id); setQuery(''); }}>
+              <li key={d.id} onClick={(e) => { e.stopPropagation(); onSearch?.(d.id); setQuery(''); }}>
                 {d.name}
               </li>
             ))}
@@ -457,7 +457,8 @@ function MobileBook() {
         {isCover ? content : (
           <div
             className={`page single paper mpage-enter ${dir === 1 ? 'from-right' : 'from-left'}`}
-            key={idx}>
+            key={idx}
+            onClick={() => go(1)}>
             {content}
           </div>
         )}
@@ -584,7 +585,7 @@ function DesktopBook() {
     if (!node) return null;
     if (isCover) return <div key={key}>{node}</div>;
     return (
-      <div className={`page ${side} paper`} key={key}>
+      <div className={`page ${side} paper`} key={key} onClick={() => turn(side === 'left' ? -1 : 1)}>
         {node}
       </div>
     );
@@ -687,38 +688,36 @@ function SaltParticles({ originX, originY }) {
   );
 }
 
-function HeroAbout() {
+// Pure DOM helper — no component state — shared by the shaker widget and the
+// "Read the book" link, which now live in different sections.
+function smoothScrollToBook() {
+  const bookEl = document.querySelector('.book-section');
+  if (!bookEl) return;
+  const bookTop = bookEl.getBoundingClientRect().top + window.scrollY;
+  const start = window.scrollY;
+  const distance = bookTop - start - 40;
+  const duration = 2000;
+  let startTime = null;
+  const step = (timestamp) => {
+    if (!startTime) startTime = timestamp;
+    const elapsed = timestamp - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const ease = progress < 0.5
+      ? 2 * progress * progress
+      : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+    window.scrollTo(0, start + distance * ease);
+    if (progress < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+
+// The clickable "sprinkle salt + scroll to book" shaker. Lives beside the
+// profile photo in AboutSection.
+function SaltShakerWidget({ className = '' }) {
   const shakerRef = useRef(null);
-  const heroSideRef = useRef(null);
+  const groupRef = useRef(null);
   const [sprinkling, setSprinkling] = useState(false);
   const [spoutPos, setSpoutPos] = useState(null);
-  const [heroVisible, setHeroVisible] = useState(false);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setHeroVisible(true), 200);
-    return () => clearTimeout(timer);
-  }, []);
-
-  const smoothScrollToBook = useCallback(() => {
-    const bookEl = document.querySelector('.book-section');
-    if (!bookEl) return;
-    const bookTop = bookEl.getBoundingClientRect().top + window.scrollY;
-    const start = window.scrollY;
-    const distance = bookTop - start - 40;
-    const duration = 2000;
-    let startTime = null;
-    const step = (timestamp) => {
-      if (!startTime) startTime = timestamp;
-      const elapsed = timestamp - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      const ease = progress < 0.5
-        ? 2 * progress * progress
-        : 1 - Math.pow(-2 * progress + 2, 2) / 2;
-      window.scrollTo(0, start + distance * ease);
-      if (progress < 1) requestAnimationFrame(step);
-    };
-    requestAnimationFrame(step);
-  }, []);
 
   const handleShakerClick = () => {
     if (sprinkling) return;
@@ -726,17 +725,18 @@ function HeroAbout() {
 
     setTimeout(() => {
       const shakerEl = shakerRef.current;
-      const parentEl = heroSideRef.current;
+      const parentEl = groupRef.current;
       if (shakerEl && parentEl) {
         const parentRect = parentEl.getBoundingClientRect();
         // Get the SVG element inside the shaker div
         const svg = shakerEl.querySelector('svg');
         if (svg) {
-          // The spout holes are around (100, 34) in the SVG viewBox (0 0 200 380)
-          // Use SVG's built-in coordinate transform to get screen position
+          // The very tip of the shaker's dome is at (100, 22) in the SVG
+          // viewBox (0 0 200 380). Use SVG's built-in coordinate transform
+          // to get its screen position so the salt falls from the tip.
           const pt = svg.createSVGPoint();
           pt.x = 100;
-          pt.y = 34;
+          pt.y = 22;
           const ctm = svg.getScreenCTM();
           const screenPt = pt.matrixTransform(ctm);
           setSpoutPos({
@@ -753,6 +753,30 @@ function HeroAbout() {
       setSpoutPos(null);
     }, 3500);
   };
+
+  return (
+    <div className={`shaker-group ${className}`} ref={groupRef}>
+      <div className="shaker-container" onClick={handleShakerClick}>
+        <div
+          ref={shakerRef}
+          className={`hero-shaker ${sprinkling ? 'sprinkling' : ''}`}
+        >
+          <SaltShaker />
+        </div>
+      </div>
+      {!sprinkling && <div className="shaker-hint">click to <span className="hint-bold">ADD SALT</span></div>}
+      {spoutPos && <SaltParticles originX={spoutPos.x + 'px'} originY={spoutPos.y + 'px'} />}
+    </div>
+  );
+}
+
+function HeroAbout() {
+  const [heroVisible, setHeroVisible] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setHeroVisible(true), 200);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <section className={`hero ${heroVisible ? 'hero-visible' : ''}`}>
@@ -779,31 +803,19 @@ function HeroAbout() {
               aria-label="Read the book">
               <span className="read-label">Read the book</span>
               <span className="read-mark" aria-hidden="true">
+                <span className="read-arrow">↑</span>
                 <span className="read-line" />
-                <span className="read-arrow">↓</span>
               </span>
             </button>
           </p>
         </div>
       </div>
-      <div className="hero-side" ref={heroSideRef}>
-        <div className="shaker-group">
-          <div className="shaker-container" onClick={handleShakerClick}>
-            <div
-              ref={shakerRef}
-              className={`hero-shaker ${sprinkling ? 'sprinkling' : ''}`}
-            >
-              <SaltShaker />
-            </div>
-          </div>
-          {!sprinkling && <div className="shaker-hint">click to <span className="hint-bold">ADD SALT</span></div>}
-        </div>
+      <div className="hero-side">
         <div className="sister-polaroid pinned-polaroid">
           <div className="pin" />
           <img src="/me-and-sister.JPG" alt="Shrishti and her sister cooking" />
           <div className="sister-cap">me and my sister</div>
         </div>
-        {spoutPos && <SaltParticles originX={spoutPos.x + 'px'} originY={spoutPos.y + 'px'} />}
       </div>
     </section>
   );
@@ -840,15 +852,18 @@ function AboutSection() {
           look and get to know me a little better through my palate.
         </p>
       </div>
-      <div className="about-photo-wrap">
-        <div className="pinned-polaroid">
-          <div className="pin" />
-          <img
-            className="about-photo"
-            src="/header-pic.JPG"
-            alt="Shrishti Roy"
-          />
+      <div className="about-photo-row">
+        <div className="about-photo-wrap">
+          <div className="pinned-polaroid">
+            <div className="pin" />
+            <img
+              className="about-photo"
+              src="/header-pic.JPG"
+              alt="Shrishti Roy"
+            />
+          </div>
         </div>
+        <SaltShakerWidget className="about-shaker" />
       </div>
     </section>
   );
@@ -945,11 +960,12 @@ export default function App() {
       </header>
 
       <AboutSection />
-      <HeroAbout />
 
       <section className="book-section">
         <Book />
       </section>
+
+      <HeroAbout />
 
       <footer className="closer">
         <h3>Find me</h3>

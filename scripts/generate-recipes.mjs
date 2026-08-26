@@ -61,13 +61,28 @@ const allRows = db.prepare(
    FROM recipes`
 ).all();
 
+// When multiple recipes share the most recent date, break the tie by chapter
+// so the newspaper popup favors the more "showstopper-y" chapters first.
+const CHAPTER_PRIORITY = {
+  showstoppers: 0,
+  'food-around-the-world': 1,
+  desserts: 2,
+  'healthy-recipes': 3,
+  'college-meals': 4,
+};
+
 const latestRow = allRows.reduce((latest, row) => {
   const rowTime = parseRecipeDate(row.date);
   if (rowTime === null) return latest;
   if (!latest) return row;
   const latestTime = parseRecipeDate(latest.date);
   if (rowTime > latestTime) return row;
-  if (rowTime === latestTime && row.id > latest.id) return row;
+  if (rowTime === latestTime) {
+    const rowPriority = CHAPTER_PRIORITY[row.chapter] ?? 99;
+    const latestPriority = CHAPTER_PRIORITY[latest.chapter] ?? 99;
+    if (rowPriority < latestPriority) return row;
+    if (rowPriority === latestPriority && row.id > latest.id) return row;
+  }
   return latest;
 }, null) ?? allRows.reduce((latest, row) => (!latest || row.id > latest.id ? row : latest), null);
 
